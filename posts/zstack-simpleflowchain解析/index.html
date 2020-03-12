@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <title>
+      
+          Zstack SimpleFlowChain解析 - nvhang
+      
+  </title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="叶宇航" />
+  <link rel="shortcut icon" type="image/x-icon" href="http://yenvhang.github.io/img/favicon.ico">
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="http://yenvhang.github.io/style.min.a50e85be2191b7446e684667eb002377b10f833f329c30d9b701ea188a664750.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+  
+  
+
+  <meta property="og:title" content="Zstack SimpleFlowChain解析" />
+<meta property="og:description" content="Zstack SimpleFlowChain 解析 初始化的时候加载指定Flow 对象到 Listflows 对象中。 执行start 时，拿出第一个Flow,判断是否需要 skip private boolean isSkipFlow(Flow flow) { Boolean skip = FieldUtils.getFieldValue(&#34;__skip__&#34;, flow); boolean ret = skip != null &amp;&amp; skip;" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://yenvhang.github.io/posts/zstack-simpleflowchain%E8%A7%A3%E6%9E%90/" />
+<meta property="article:published_time" content="2018-12-27T01:39:46+08:00" />
+<meta property="article:modified_time" content="2018-12-27T01:39:46+08:00" />
+<meta itemprop="name" content="Zstack SimpleFlowChain解析">
+<meta itemprop="description" content="Zstack SimpleFlowChain 解析 初始化的时候加载指定Flow 对象到 Listflows 对象中。 执行start 时，拿出第一个Flow,判断是否需要 skip private boolean isSkipFlow(Flow flow) { Boolean skip = FieldUtils.getFieldValue(&#34;__skip__&#34;, flow); boolean ret = skip != null &amp;&amp; skip;">
+<meta itemprop="datePublished" content="2018-12-27T01:39:46&#43;08:00" />
+<meta itemprop="dateModified" content="2018-12-27T01:39:46&#43;08:00" />
+<meta itemprop="wordCount" content="2072">
+
+
+
+<meta itemprop="keywords" content="zstack," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:image" content="http://yenvhang.github.io//img/avatar.jpg"/>
+<meta name="twitter:title" content="Zstack SimpleFlowChain解析"/>
+<meta name="twitter:description" content="Zstack SimpleFlowChain 解析 初始化的时候加载指定Flow 对象到 Listflows 对象中。 执行start 时，拿出第一个Flow,判断是否需要 skip private boolean isSkipFlow(Flow flow) { Boolean skip = FieldUtils.getFieldValue(&#34;__skip__&#34;, flow); boolean ret = skip != null &amp;&amp; skip;"/>
+
+  <!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+  <!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <![endif]-->
+
+  </head>
+
+  <body>
+    
+  <h1>Zstack SimpleFlowChain解析</h1>
+  <header>
+  
+  <div class="avatar">
+    <img class="avatarMask" src="http://yenvhang.github.io//img/avatar.jpg">
+    <a href="http://yenvhang.github.io/"><img src="http://yenvhang.github.io//img/avatar-border.svg"></a>
+  </div>
+  
+  <h2><a class="author" href="http://yenvhang.github.io/">叶宇航</a></h2>
+</header>
+
+  
+  
+  <p class="date">December 27, 2018</p>
+  
+  <div id="tags">
+    <ul>
+      
+        
+        
+          <li><a href="http://yenvhang.github.io/tags/zstack/">zstack</a></li>
+        
+      
+    </ul>
+  </div>
+  
+  <div id="contentBody">
+    <h2 id="zstack-simpleflowchain-解析">Zstack SimpleFlowChain 解析</h2>
+<p>初始化的时候加载指定Flow 对象到 List<!-- raw HTML omitted --> flows 对象中。</p>
+<p>执行start 时，拿出第一个Flow,判断是否需要 skip</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">isSkipFlow</span><span style="color:#f92672">(</span>Flow flow<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    Boolean skip <span style="color:#f92672">=</span> FieldUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">getFieldValue</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;__skip__&#34;</span><span style="color:#f92672">,</span> flow<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">boolean</span> ret <span style="color:#f92672">=</span> skip <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">&amp;&amp;</span> skip<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>ret<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        logger<span style="color:#f92672">.</span><span style="color:#a6e22e">debug</span><span style="color:#f92672">(</span>String<span style="color:#f92672">.</span><span style="color:#a6e22e">format</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;[FlowChain: %s] skip flow[%s] because it&#39;s __skip__ set to true&#34;</span><span style="color:#f92672">,</span> name<span style="color:#f92672">,</span> getFlowName<span style="color:#f92672">(</span>flow<span style="color:#f92672">)));</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">return</span> ret<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>这段代码不理解的地方是 为什么不通过 在Flow 中加入一个 isSkipFlow 方法，让Flow实现类 通过 重写方法的形式去 决定要不要 跳过 当前FLow。</p>
+<p>而Zstack 中的这段代码 是通过往实现类 中 写入一个  <strong>skip</strong> 字段 来决定是否需要 跳过此类。 这对于二次开发来说非常非常的不友好，本身zstack 就没有 提供很好的开发文档，要实现跳过当前的Flow 的功能，还要阅读一下FlowChain 的源码。</p>
+<p>个人认为annotation 的方式都比 <strong>skip</strong> 的可读性 高上一百倍。重复一遍Zstack垃圾！！</p>
+<pre><code>currentFlow = toRun;
+
+String flowName = getFlowName(currentFlow);
+String info = String.format(&quot;[FlowChain(%s): %s] start executing flow[%s]&quot;, id, name, flowName);
+logger.debug(info);
+collectAfterRunnable(toRun);
+toRun.run(this, data);
+</code></pre><p>接着</p>
+<p>如果不需要skip ,则执行该Flow。</p>
+<p>执行该Flow 前，设置currentFlow 为 当前Flow。接着打印 该Flow 的信息。Flow 的信息又是特码通过在 Flow 实现类中 设置 __name__字段</p>
+<pre><code>String name = FieldUtils.getFieldValue(&quot;__name__&quot;, flow);
+if (name == null) {
+    name = flow.getClass().getSimpleName();
+    if (name.equals(&quot;&quot;)) {
+        name = flow.getClass().getName();
+    }
+}
+</code></pre><p>紧接着还需要 收集一下各种runnable 方法</p>
+<pre><code>private void collectAfterRunnable(Flow flow) {
+    List&lt;Field&gt; ad = FieldUtils.getAnnotatedFieldsOnThisClass(AfterDone.class, flow.getClass());
+    for (Field f : ad) {
+        List lst = FieldUtils.getFieldValue(f.getName(), flow);
+        if (lst != null) {
+            afterDone.add(lst);
+        }
+    }
+
+    ad = FieldUtils.getAnnotatedFieldsOnThisClass(AfterError.class, flow.getClass());
+    for (Field f : ad) {
+        List lst = FieldUtils.getFieldValue(f.getName(), flow);
+        if (lst != null) {
+            afterError.add(lst);
+        }
+    }
+
+    ad = FieldUtils.getAnnotatedFieldsOnThisClass(AfterFinal.class, flow.getClass());
+    for (Field f : ad) {
+        List lst = FieldUtils.getFieldValue(f.getName(), flow);
+        if (lst != null) {
+            afterFinal.add(lst);
+        }
+    }
+}
+</code></pre><p>AfterDone，AfterError，AfterFinal 注解的字段分别被加到 FlowChain 的 afterDone,afterError,afterFinal 中</p>
+<p>在接着执行完toRun.run 方法之后，start 方法似乎就结束了，那执行完当前Flow，怎么开始下一个Flow 的执行呢。</p>
+<p>我们仔细观察下 toRun.run 的参数，没错，FlowChain 对象 被传到Flow 的run 方法中去了，所以是否执行下一个Flow,是放在当前Flow 中决定的。（疑问：那我Flow 如果执行的时候抛异常了呢？怎么控制我跑到ErrorHandler里面去？？）</p>
+<p>我们参考CreateVMFlow 的代码来看一下FlowChain 接下去的 执行流程</p>
+<pre><code>bus.send(cmsg, new CloudBusCallBack(cmsg) {
+    @Override
+    public void run(MessageReply reply) {
+        if (reply.isSuccess()) {
+            CreateVmInstanceReply creply = (CreateVmInstanceReply) reply;
+            // 设置vm uuid
+            vmUuid = creply.getInventory().getUuid();
+            inventory.setVmUuid(creply.getInventory().getUuid());
+            CreateVmEvent.RunData runData = new CreateVmEvent.RunData();
+            runData.standardDataBaseInstanceData = inventory;
+            runData.vmInstanceInventory = creply.getInventory();
+            for (BackupDBFlowExtension ext : pluginRgty.getExtensionList(BackupDBFlowExtension.class)) {
+                ext.handleFlowEvent(CreateVmEvent.RUN, runData, inventory);
+            }
+            trigger.next();
+        } else {
+            trigger.fail(reply.getError());
+        }
+    }
+});
+</code></pre><p>如果消息响应成功，</p>
+<pre><code>public void next() {
+    if (!isStart) {
+        throw new CloudRuntimeException(
+                String.format(&quot;[FlowChain(%s): %s] you must call start() first, and only call next() in Flow.run()&quot;,
+                        id, name));
+    }
+
+    if (isRollbackStart) {
+        throw new CloudRuntimeException(
+                String.format(&quot;[FlowChain(%s): %s] rollback has started, you can't call next()&quot;, id, name));
+    }
+
+    rollBackFlows.push(currentFlow);
+</code></pre><p>把当前flow 加到 rollBackFlows 中，用于后续回滚操作。</p>
+<p>如果消息响应失败</p>
+<pre><code>public void fail(ErrorCode errorCode) {
+    isFailCalled = true;
+    setErrorCode(errorCode);
+    rollBackFlows.push(currentFlow);
+    rollback();
+}
+</code></pre><p>同样把当前flow 加到 rollBackFlows中。</p>
+<p>接着看rollback 方法</p>
+<pre><code>public void rollback() {
+    if (!isFailCalled) {
+        throw new CloudRuntimeException(&quot;rollback() cannot be called before fail() is called&quot;);
+    }
+
+    isRollbackStart = true;
+    if (rollBackFlows.empty()) {
+        callErrorHandler(true);
+        return;
+    }
+
+    if (skipRestRollbacks) {
+        List&lt;String&gt; restRollbackNames = CollectionUtils.transformToList(rollBackFlows, new Function&lt;String, Flow&gt;() {
+            @Override
+            public String call(Flow arg) {
+                return arg.getClass().getSimpleName();
+            }
+        });
+
+        logger.debug(String.format(&quot;[FlowChain(%s): %s] we are instructed to skip rollbacks for remaining flows%s&quot;,
+                id, name, restRollbackNames));
+        callErrorHandler(true);
+        return;
+    }
+
+    if (currentRollbackFlow != null) {
+        logger.debug(String.format(&quot;[FlowChain(%s): %s] successfully rolled back flow[%s]&quot;,
+                id, name, getFlowName(currentRollbackFlow)));
+    } else {
+        logger.debug(String.format(&quot;[FlowChain(%s): %s] start to rollback&quot;, id, name));
+    }
+
+    Flow flow = rollBackFlows.pop();
+    currentRollbackFlow = flow;
+    rollbackFlow(flow);
+</code></pre><p>rollBack 方法中 判断要不要跳过后续的所有flow 的回滚方法，直接跑到errorHandler中。</p>
+<p>这个skipRestRollbacks 在哪里设置后面再说。</p>
+<p>如果不跳过呢，执行当前flow 的rollBack 方法。</p>
+<p>依次循环，是否继续rollBack 完全取决于 下一个flow 中 rollback 方法中的实现。</p>
+<p>如果当前flow 不想执行后续的rollBack，那就在rollBack的实现方法中调用 flowChain 的skipRestRollbacks。</p>
+<pre><code>public void skipRestRollbacks() {
+    skipRestRollbacks = true;
+}
+</code></pre><p>当然这还不够。这就是zstack 坑人的地方。</p>
+<p>明明这个方法是个skip 动词，它确只是 修改了个状态值，然后！！方法就结束了，flowChain 对象在 triger.next 或 triger.fail 的传递中 突然在这一步skipRestRollBacks 方法中结束了！！这时候flowChain 对象没有被任何东西引用到，就被gc 回收了，可是！之前定义的finallyHandler 和 errorHandler 还没执行呢。</p>
+<p>要实现 不执行后续rollBack 的需求</p>
+<p>flow 的 rollBack 应该这么写</p>
+<pre><code>public void rollback(FlowRollback trigger, Map data) {
+    trigger.skipRestRollbacks();
+    trigger.rollback();
+}
+</code></pre><p>个人认为这个 trigger.rollback（） 应该 写在skipRestRollback中，这样可读性更高。但我们无法修改ztsack 的原生代码只能妥协。</p>
+<p>不过我补写了个SkipRestRollbackFlow 类</p>
+<pre><code>public abstract class SkipRestRollbackFlow implements Flow {
+    @Override
+    public void rollback(FlowRollback trigger, Map data) {
+        trigger.skipRestRollbacks();
+        trigger.rollback();
+    }
+}
+</code></pre><p>想实现此功能的flow 只需要继承该SkipRestRollbackFlow 即可。</p>
+<p>flowChain 的rollBack 往往是为了回滚操作释放资源，但有些flow 发生错误 不去回滚，就是为了保留错误现场，以帮助dba 排除问题。</p>
+<p>也有这样一种业务场景，某个flow 发生了错误，但我不希望他回滚，也不希望他停下来，而是在错误上执行去执行下一个flow,最后的时候再去调用errorHandler</p>
+<p>那我们可以在flow 的run 方法中 调用</p>
+<pre><code>trigger.setError(err);
+trigger.next();
+</code></pre><p>这样就可以实现 跳过所有rollBack 方法，直接去执行errorHandler</p>
+<p>可以从下面的代码中得到证明。</p>
+<pre><code>public void next() {
+    if (!isStart) {
+        throw new CloudRuntimeException(
+                String.format(&quot;[FlowChain(%s): %s] you must call start() first, and only call next() in Flow.run()&quot;,
+                        id, name));
+    }
+
+    if (isRollbackStart) {
+        throw new CloudRuntimeException(
+                String.format(&quot;[FlowChain(%s): %s] rollback has started, you can't call next()&quot;, id, name));
+    }
+
+    rollBackFlows.push(currentFlow);
+
+    logger.debug(String.format(&quot;[FlowChain(%s): %s] successfully executed flow[%s]&quot;, id, name, getFlowName(currentFlow)));
+
+    Flow flow = getFirstNotSkippedFlow();
+    if (flow == null) {
+        // no flows, or all flows are skipped
+        if (errorCode == null) {
+            callDoneHandler();
+        } else {
+            callErrorHandler(false);
+        }
+    } else {
+        runFlow(flow);
+    }
+}
+</code></pre><p>如果取出的flow 为空（最后一个flow 执行完了）</p>
+<p>如果errorCode 不为空，那就是去 errorHandler</p>
+<p>否则执行 doneHandler。</p>
+<p>如果取出的flow不为空。</p>
+<p>依次调用，直到 flow 为空。</p>
+
+  </div>
+  <footer>
+  <p>
+  &copy; 2019 叶宇航.
+  Powered by <a href="https://gohugo.io/">Hugo</a>
+  using the <a href="https://github.com/koirand/pulp/">pulp</a> theme.
+  </p>
+</footer>
+
+
+  </body>
+</html>

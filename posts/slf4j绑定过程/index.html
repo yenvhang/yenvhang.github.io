@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <title>
+      
+          Slf4j绑定过程 - nvhang
+      
+  </title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="叶宇航" />
+  <link rel="shortcut icon" type="image/x-icon" href="http://yenvhang.github.io/img/favicon.ico">
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="http://yenvhang.github.io/style.min.a50e85be2191b7446e684667eb002377b10f833f329c30d9b701ea188a664750.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+  
+  
+
+  <meta property="og:title" content="Slf4j绑定过程" />
+<meta property="og:description" content="slf4j 作为一个日志接口。定义了实现日志框架的一些规范。那么slfj 是如何找到它的实现类呢？ 首先我们引入slf4j org.slf4jslf4j-a" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://yenvhang.github.io/posts/slf4j%E7%BB%91%E5%AE%9A%E8%BF%87%E7%A8%8B/" />
+<meta property="article:published_time" content="2018-04-25T02:02:36+08:00" />
+<meta property="article:modified_time" content="2018-04-25T02:02:36+08:00" />
+<meta itemprop="name" content="Slf4j绑定过程">
+<meta itemprop="description" content="slf4j 作为一个日志接口。定义了实现日志框架的一些规范。那么slfj 是如何找到它的实现类呢？ 首先我们引入slf4j org.slf4jslf4j-a">
+<meta itemprop="datePublished" content="2018-04-25T02:02:36&#43;08:00" />
+<meta itemprop="dateModified" content="2018-04-25T02:02:36&#43;08:00" />
+<meta itemprop="wordCount" content="789">
+
+
+
+<meta itemprop="keywords" content="log," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:image" content="http://yenvhang.github.io//img/avatar.jpg"/>
+<meta name="twitter:title" content="Slf4j绑定过程"/>
+<meta name="twitter:description" content="slf4j 作为一个日志接口。定义了实现日志框架的一些规范。那么slfj 是如何找到它的实现类呢？ 首先我们引入slf4j org.slf4jslf4j-a"/>
+
+  <!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+  <!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <![endif]-->
+
+  </head>
+
+  <body>
+    
+  <h1>Slf4j绑定过程</h1>
+  <header>
+  
+  <div class="avatar">
+    <img class="avatarMask" src="http://yenvhang.github.io//img/avatar.jpg">
+    <a href="http://yenvhang.github.io/"><img src="http://yenvhang.github.io//img/avatar-border.svg"></a>
+  </div>
+  
+  <h2><a class="author" href="http://yenvhang.github.io/">叶宇航</a></h2>
+</header>
+
+  
+  
+  <p class="date">April 25, 2018</p>
+  
+  <div id="tags">
+    <ul>
+      
+        
+        
+          <li><a href="http://yenvhang.github.io/tags/log/">log</a></li>
+        
+      
+    </ul>
+  </div>
+  
+  <div id="contentBody">
+    <p>   slf4j 作为一个日志接口。定义了实现日志框架的一些规范。那么slfj 是如何找到它的实现类呢？</p>
+<p>首先我们引入slf4j 
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->org.slf4j<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->slf4j-api<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->1.7.24<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+参考官方文档写法</p>
+<pre><code> import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ public class HelloWorld {
+   public static void main(String[] args) {
+    Logger logger = LoggerFactory.getLogger(HelloWorld.class);
+    logger.info(&quot;Hello World&quot;);
+  }
+}
+</code></pre>
+<p>运行后 有如下异常信息
+<img src="https://upload-images.jianshu.io/upload_images/5426080-be7d2b97b5c2a92e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="112850d8-52c5-45ac-8d0e-6db9aaf81d96.png"></p>
+<p>大概能猜到 是因为少了某些类。
+根据错误信息一步步定位到代码位置。
+<img src="https://upload-images.jianshu.io/upload_images/5426080-66d533e25bc8b12e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="c99ef6c7-bb83-4f38-809f-e63b64b961d2.png"></p>
+<p>调用getLogger方法后执行 初始化方法 performInitialization();
+<img src="https://upload-images.jianshu.io/upload_images/5426080-b0c411814851a6c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="728ec978-eeaf-4531-a6c1-dcfcc3d00d3a.png">
+再进入Bind 方法
+<img src="https://upload-images.jianshu.io/upload_images/5426080-298e7498523cd8e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="18e76f00-cbf1-4ef7-844f-6f800c6e69b3.png"></p>
+<p>在17行我们找到了错误信息的来源。这里应该能猜到是因为JVM 运行的时候找不到StaticLoggerBinder类。
+参考 slf4j 的实现框架log4j 的StaticLoggerBinder类。
+新建了一个自己的StaticLoggerBind类。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/5426080-f13716d42a86e5cc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="8aa5b2f3-da85-4217-9913-5987e0eeae66.png"></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/5426080-fc5659717e5b5cbd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="152cbcb1-1c59-495d-818a-a16be13353cd.png"></p>
+<p>如上。我们再去运行一下我们那段hello代码。程序就能正常运行了。
+因为new 出来的Logger 类 没有真正去实现info方法。所有没有任何日志输出。
+<img src="https://upload-images.jianshu.io/upload_images/5426080-2ce94f83591f7c6c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="b51814d1-d52e-45c8-acce-a6f2d312312b.png"></p>
+<p>流程：调用SLF4J 中的LoggerFactory.getLogger 方法后会先去获取ILoggerFactory对象。
+获取该工厂对象时，会根据状态来判断是否 执行初始化方法。
+在初始话方法中 加载StaticLoggerBinder类。
+通过ClasssLoader.getResource(&ldquo;org/slf4j/impl/StaticLoggerBinder.class&rdquo;) 判断是否绑定了多个StaticLoggerBinder。并对比SLF4J 支持的版本号和StatiLoggerBinder 中提供的版本号。
+通过ClassLoader 去检查是否有多个StatiLoggerBinder.class。
+再把ILoggerFactory 对象的返回 委托给 StatiLoggerBinder去实现。
+StatiLoggerBinder返回ILoggerFactory后再通过ILoogerFactory 去获取Logger 对象。</p>
+
+  </div>
+  <footer>
+  <p>
+  &copy; 2019 叶宇航.
+  Powered by <a href="https://gohugo.io/">Hugo</a>
+  using the <a href="https://github.com/koirand/pulp/">pulp</a> theme.
+  </p>
+</footer>
+
+
+  </body>
+</html>

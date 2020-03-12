@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <title>
+      
+          线程状态 - nvhang
+      
+  </title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="叶宇航" />
+  <link rel="shortcut icon" type="image/x-icon" href="http://yenvhang.github.io/img/favicon.ico">
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="http://yenvhang.github.io/style.min.a50e85be2191b7446e684667eb002377b10f833f329c30d9b701ea188a664750.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+  
+  
+
+  <meta property="og:title" content="线程状态" />
+<meta property="og:description" content="线程状态 背景 发生OOM 之后通过 jstack 获取线程信息，当看到一堆线程状态的时候会有点迷，不知道各种线程状态具体代表的是什么意义,RUNABLE 很好理" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://yenvhang.github.io/posts/%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81/" />
+<meta property="article:published_time" content="2019-12-03T22:07:30+08:00" />
+<meta property="article:modified_time" content="2019-12-03T22:07:30+08:00" />
+<meta itemprop="name" content="线程状态">
+<meta itemprop="description" content="线程状态 背景 发生OOM 之后通过 jstack 获取线程信息，当看到一堆线程状态的时候会有点迷，不知道各种线程状态具体代表的是什么意义,RUNABLE 很好理">
+<meta itemprop="datePublished" content="2019-12-03T22:07:30&#43;08:00" />
+<meta itemprop="dateModified" content="2019-12-03T22:07:30&#43;08:00" />
+<meta itemprop="wordCount" content="1128">
+
+
+
+<meta itemprop="keywords" content="java," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:image" content="http://yenvhang.github.io//img/avatar.jpg"/>
+<meta name="twitter:title" content="线程状态"/>
+<meta name="twitter:description" content="线程状态 背景 发生OOM 之后通过 jstack 获取线程信息，当看到一堆线程状态的时候会有点迷，不知道各种线程状态具体代表的是什么意义,RUNABLE 很好理"/>
+
+  <!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+  <!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <![endif]-->
+
+  </head>
+
+  <body>
+    
+  <h1>线程状态</h1>
+  <header>
+  
+  <div class="avatar">
+    <img class="avatarMask" src="http://yenvhang.github.io//img/avatar.jpg">
+    <a href="http://yenvhang.github.io/"><img src="http://yenvhang.github.io//img/avatar-border.svg"></a>
+  </div>
+  
+  <h2><a class="author" href="http://yenvhang.github.io/">叶宇航</a></h2>
+</header>
+
+  
+  
+  <p class="date">December 3, 2019</p>
+  
+  <div id="tags">
+    <ul>
+      
+        
+        
+          <li><a href="http://yenvhang.github.io/tags/java/">java</a></li>
+        
+      
+    </ul>
+  </div>
+  
+  <div id="contentBody">
+    <h3 id="heading"></h3>
+<h3 id="线程状态">线程状态</h3>
+<h4 id="背景">背景</h4>
+<p><img src="http://yenvhang.github.io/assets/image-20191203212233282.png" alt="image-20191203212233282"></p>
+<blockquote>
+<p>发生OOM 之后通过 <em>jstack</em> 获取线程信息，当看到一堆线程状态的时候会有点迷，不知道各种线程状态具体代表的是什么意义,RUNABLE 很好理解，但是 BLOCKED,TIMED_WAITING 和 WAITING 具体有什么区别呢，CPU 又是处于一个什么样的利用状态呢？</p>
+</blockquote>
+<p>带着这个疑惑翻了下Java Thread类</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> State <span style="color:#f92672">{</span>
+        <span style="color:#75715e">/**
+</span><span style="color:#75715e">         * Thread state for a thread which has not yet started.
+</span><span style="color:#75715e">         */</span>
+        NEW<span style="color:#f92672">,</span>
+
+        <span style="color:#75715e">/**
+</span><span style="color:#75715e">         * Thread state for a runnable thread.  A thread in the runnable
+</span><span style="color:#75715e">         * state is executing in the Java virtual machine but it may
+</span><span style="color:#75715e">         * be waiting for other resources from the operating system
+</span><span style="color:#75715e">         * such as processor.
+</span><span style="color:#75715e">         */</span>
+        RUNNABLE<span style="color:#f92672">,</span>
+
+        <span style="color:#75715e">/**
+</span><span style="color:#75715e">         * Thread state for a thread blocked waiting for a monitor lock.
+</span><span style="color:#75715e">         * A thread in the blocked state is waiting for a monitor lock
+</span><span style="color:#75715e">         * to enter a synchronized block/method or
+</span><span style="color:#75715e">         * reenter a synchronized block/method after calling
+</span><span style="color:#75715e">         * {@link Object#wait() Object.wait}.
+</span><span style="color:#75715e">         */</span>
+        BLOCKED<span style="color:#f92672">,</span>
+
+        <span style="color:#75715e">/**
+</span><span style="color:#75715e">         * Thread state for a waiting thread.
+</span><span style="color:#75715e">         * A thread is in the waiting state due to calling one of the
+</span><span style="color:#75715e">         * following methods:
+</span><span style="color:#75715e">         * &lt;ul&gt;
+</span><span style="color:#75715e">         *   &lt;li&gt;{@link Object#wait() Object.wait} with no timeout&lt;/li&gt;
+</span><span style="color:#75715e">         *   &lt;li&gt;{@link #join() Thread.join} with no timeout&lt;/li&gt;
+</span><span style="color:#75715e">         *   &lt;li&gt;{@link LockSupport#park() LockSupport.park}&lt;/li&gt;
+</span><span style="color:#75715e">         * &lt;/ul&gt;
+</span><span style="color:#75715e">         *
+</span><span style="color:#75715e">         * &lt;p&gt;A thread in the waiting state is waiting for another thread to
+</span><span style="color:#75715e">         * perform a particular action.
+</span><span style="color:#75715e">         *
+</span><span style="color:#75715e">         * For example, a thread that has called &lt;tt&gt;Object.wait()&lt;/tt&gt;
+</span><span style="color:#75715e">         * on an object is waiting for another thread to call
+</span><span style="color:#75715e">         * &lt;tt&gt;Object.notify()&lt;/tt&gt; or &lt;tt&gt;Object.notifyAll()&lt;/tt&gt; on
+</span><span style="color:#75715e">         * that object. A thread that has called &lt;tt&gt;Thread.join()&lt;/tt&gt;
+</span><span style="color:#75715e">         * is waiting for a specified thread to terminate.
+</span><span style="color:#75715e">         */</span>
+        WAITING<span style="color:#f92672">,</span>
+
+        <span style="color:#75715e">/**
+</span><span style="color:#75715e">         * Thread state for a waiting thread with a specified waiting time.
+</span><span style="color:#75715e">         * A thread is in the timed waiting state due to calling one of
+</span><span style="color:#75715e">         * the following methods with a specified positive waiting time:
+</span><span style="color:#75715e">         * &lt;ul&gt;
+</span><span style="color:#75715e">         *   &lt;li&gt;{@link #sleep Thread.sleep}&lt;/li&gt;
+</span><span style="color:#75715e">         *   &lt;li&gt;{@link Object#wait(long) Object.wait} with timeout&lt;/li&gt;
+</span><span style="color:#75715e">         *   &lt;li&gt;{@link #join(long) Thread.join} with timeout&lt;/li&gt;
+</span><span style="color:#75715e">         *   &lt;li&gt;{@link LockSupport#parkNanos LockSupport.parkNanos}&lt;/li&gt;
+</span><span style="color:#75715e">         *   &lt;li&gt;{@link LockSupport#parkUntil LockSupport.parkUntil}&lt;/li&gt;
+</span><span style="color:#75715e">         * &lt;/ul&gt;
+</span><span style="color:#75715e">         */</span>
+        TIMED_WAITING<span style="color:#f92672">,</span>
+
+        <span style="color:#75715e">/**
+</span><span style="color:#75715e">         * Thread state for a terminated thread.
+</span><span style="color:#75715e">         * The thread has completed execution.
+</span><span style="color:#75715e">         */</span>
+        TERMINATED<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><p>线程有NEW，RUNNABLE，BLOCKED，WAITING，TIMED_WAITING，TERMINATED 这些状态</p>
+<h5 id="new">NEW</h5>
+<p>​	线程刚创建未调用start时 的状态</p>
+<h5 id="runnable">RUNNABLE</h5>
+<p>​	线程创建好后调用start,处于运行中或者等待CPU调度的状态</p>
+<h5 id="blocked">BLOCKED</h5>
+<p>​	阻塞在synchornized 同步代码块外面的状态</p>
+<h5 id="waiting">WAITING</h5>
+<p>​	调用object.wait thread.join LockSupport.park 时的状态</p>
+<h5 id="timed_waiting">TIMED_WAITING</h5>
+<p>​	调用WAITING 类操作但指定了等待时间</p>
+<h5 id="terminated">TERMINATED</h5>
+<p>​	线程执行完毕的时候</p>
+<h5 id="测试代码">测试代码</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ThreadTest</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> ONE_MINUTE_IN_MILLIS <span style="color:#f92672">=</span> 60000<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> Object object <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Object<span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> Object object2 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Object<span style="color:#f92672">();</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> InterruptedException <span style="color:#f92672">{</span>
+        ThreadTest threadTest <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ThreadTest<span style="color:#f92672">();</span>
+
+        <span style="color:#66d9ef">new</span> Thread<span style="color:#f92672">(()</span> <span style="color:#f92672">-&gt;</span> threadTest<span style="color:#f92672">.</span><span style="color:#a6e22e">waitObject</span><span style="color:#f92672">(),</span> <span style="color:#e6db74">&#34;thread1&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">start</span><span style="color:#f92672">();</span>
+
+        <span style="color:#66d9ef">new</span> Thread<span style="color:#f92672">(()</span> <span style="color:#f92672">-&gt;</span> threadTest<span style="color:#f92672">.</span><span style="color:#a6e22e">waitMethod</span><span style="color:#f92672">(),</span> <span style="color:#e6db74">&#34;thread2&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">start</span><span style="color:#f92672">();</span>
+
+        <span style="color:#66d9ef">new</span> Thread<span style="color:#f92672">(()</span> <span style="color:#f92672">-&gt;</span> threadTest<span style="color:#f92672">.</span><span style="color:#a6e22e">waitMethod</span><span style="color:#f92672">(),</span> <span style="color:#e6db74">&#34;thread3&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">start</span><span style="color:#f92672">();</span>
+
+        Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">sleep</span><span style="color:#f92672">(</span>ONE_MINUTE_IN_MILLIS <span style="color:#f92672">*</span> 2<span style="color:#f92672">);</span>
+
+        <span style="color:#66d9ef">new</span> Thread<span style="color:#f92672">(()</span> <span style="color:#f92672">-&gt;</span> threadTest<span style="color:#f92672">.</span><span style="color:#a6e22e">notifyObject</span><span style="color:#f92672">(),</span> <span style="color:#e6db74">&#34;thread4&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">start</span><span style="color:#f92672">();</span>
+
+        Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">sleep</span><span style="color:#f92672">(</span>ONE_MINUTE_IN_MILLIS <span style="color:#f92672">*</span> 3<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 测试 阻塞在 object.wait时 线程的状态
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">waitObject</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">synchronized</span> <span style="color:#f92672">(</span>object<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+                object<span style="color:#f92672">.</span><span style="color:#a6e22e">wait</span><span style="color:#f92672">();</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>InterruptedException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 释放 object.wait
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">notifyObject</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">synchronized</span> <span style="color:#f92672">(</span>object<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            object<span style="color:#f92672">.</span><span style="color:#a6e22e">notify</span><span style="color:#f92672">();</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 测试 阻塞在 进入synchronize 代码块时 线程的状态
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">waitMethod</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">synchronized</span> <span style="color:#f92672">(</span>object2<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+                Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">sleep</span><span style="color:#f92672">(</span>ONE_MINUTE_IN_MILLIS <span style="color:#f92672">*</span> 1<span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>InterruptedException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>上述代码会启动三个线程。</p>
+<p>Thread1 测试object.await（）时线程的状态。</p>
+<p>Thread2 获取object2 的锁后 调用 Thread.sleep(two_min);测试Thread.sleep 时线程的状态。</p>
+<p>Thread3 获取object2 锁失败会被阻塞在 synchornized 代码块外面。</p>
+<p><img src="assets/image-20191203213534791.png" alt="image-20191203213534791"></p>
+<p><img src="assets/image-20191203213551111.png" alt="image-20191203213551111"></p>
+<p>如上图，代码刚运行的时候</p>
+<p>thread1 调用object.wait 处于WAITING 状态。</p>
+<p>thread2 调用 thread.sleep 处于 TIMED_WAITING 状态。</p>
+<p>thread3 阻塞在synchornized  代码块外面处于 BLOCKED 状态。</p>
+<h6 id="一分钟后">一分钟后</h6>
+<p><img src="http://yenvhang.github.io/assets/image-20191203213622684.png" alt="image-20191203213622684"></p>
+<p><img src="http://yenvhang.github.io/assets/image-20191203213636189.png" alt="image-20191203213636189"></p>
+<p>thread2 sleep 结束，释放object2 锁。thread3 抢占到了object2 锁，从 BLOCKED 状态变成了 TIMED_WAITING。</p>
+<h6 id="两分钟后">两分钟后</h6>
+<p><img src="http://yenvhang.github.io/assets/image-20191203213801447.png" alt="image-20191203213801447"></p>
+<p>由于两分钟后调用object.notify()。thread1被唤醒，从而结束线程</p>
+<p>thread1 也因为 thread.sleep(onw_min) 的时间到了，结束线程</p>
+<p>所以只剩这个Main 线程了</p>
+
+  </div>
+  <footer>
+  <p>
+  &copy; 2019 叶宇航.
+  Powered by <a href="https://gohugo.io/">Hugo</a>
+  using the <a href="https://github.com/koirand/pulp/">pulp</a> theme.
+  </p>
+</footer>
+
+
+  </body>
+</html>

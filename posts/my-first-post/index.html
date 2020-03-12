@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <title>
+      
+          FastJson Feature - nvhang
+      
+  </title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="叶宇航" />
+  <link rel="shortcut icon" type="image/x-icon" href="http://yenvhang.github.io/img/favicon.ico">
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="http://yenvhang.github.io/style.min.a50e85be2191b7446e684667eb002377b10f833f329c30d9b701ea188a664750.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+  
+  
+
+  <meta property="og:title" content="FastJson Feature" />
+<meta property="og:description" content="FastJson Feature FastJson 在序列化和反序列化的过程中提供了很多特性,比如Feature.DisableFieldSmartMatch。如果没有选择该Featur" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://yenvhang.github.io/posts/my-first-post/" />
+<meta property="article:published_time" content="2020-02-25T02:55:33+08:00" />
+<meta property="article:modified_time" content="2020-02-25T02:55:33+08:00" />
+<meta itemprop="name" content="FastJson Feature">
+<meta itemprop="description" content="FastJson Feature FastJson 在序列化和反序列化的过程中提供了很多特性,比如Feature.DisableFieldSmartMatch。如果没有选择该Featur">
+<meta itemprop="datePublished" content="2020-02-25T02:55:33&#43;08:00" />
+<meta itemprop="dateModified" content="2020-02-25T02:55:33&#43;08:00" />
+<meta itemprop="wordCount" content="453">
+
+
+
+<meta itemprop="keywords" content="framework," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:image" content="http://yenvhang.github.io//img/avatar.jpg"/>
+<meta name="twitter:title" content="FastJson Feature"/>
+<meta name="twitter:description" content="FastJson Feature FastJson 在序列化和反序列化的过程中提供了很多特性,比如Feature.DisableFieldSmartMatch。如果没有选择该Featur"/>
+
+  <!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+  <!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <![endif]-->
+
+  </head>
+
+  <body>
+    
+  <h1>FastJson Feature</h1>
+  <header>
+  
+  <div class="avatar">
+    <img class="avatarMask" src="http://yenvhang.github.io//img/avatar.jpg">
+    <a href="http://yenvhang.github.io/"><img src="http://yenvhang.github.io//img/avatar-border.svg"></a>
+  </div>
+  
+  <h2><a class="author" href="http://yenvhang.github.io/">叶宇航</a></h2>
+</header>
+
+  
+  
+  <p class="date">February 25, 2020</p>
+  
+  <div id="tags">
+    <ul>
+      
+        
+        
+          <li><a href="http://yenvhang.github.io/tags/framework/">framework</a></li>
+        
+      
+    </ul>
+  </div>
+  
+  <div id="contentBody">
+    <h2 id="fastjson-feature">FastJson Feature</h2>
+<p>FastJson 在序列化和反序列化的过程中提供了很多特性,比如Feature.DisableFieldSmartMatch。如果没有选择该Feature,那么在反序列的过程中，FastJson 会自动把下划线命名的Json字符串转化到驼峰式命名的Java对象字段中。</p>
+<pre><code>public enum Feature {
+    /**
+	 * 
+	 */
+    AutoCloseSource,
+    /**
+	 * 
+	 */
+    AllowComment,
+    /**
+	 * 
+	 */
+    AllowUnQuotedFieldNames,
+    /**
+	 * 
+	 */
+    AllowSingleQuotes,
+    /**
+	 * 
+	 */
+    InternFieldNames,
+    /**
+	 * 
+	 */
+    AllowISO8601DateFormat,
+
+    /**
+     * {&quot;a&quot;:1,,,&quot;b&quot;:2}
+     */
+    AllowArbitraryCommas,
+
+    /**
+     * 
+     */
+    UseBigDecimal,
+    
+    /**
+     * @since 1.1.2
+     */
+    IgnoreNotMatch,
+
+    /**
+     * @since 1.1.3
+     */
+    SortFeidFastMatch,
+    
+    /**
+     * @since 1.1.3
+     */
+    DisableASM,
+    
+    /**
+     * @since 1.1.7
+     */
+    DisableCircularReferenceDetect,
+    
+    /**
+     * @since 1.1.10
+     */
+    InitStringFieldAsEmpty,
+    
+    /**
+     * @since 1.1.35
+     * 
+     */
+    SupportArrayToBean,
+    
+    /**
+     * @since 1.2.3
+     * 
+     */
+    OrderedField,
+    
+    /**
+     * @since 1.2.5
+     * 
+     */
+    DisableSpecialKeyDetect,
+    
+    /**
+     * @since 1.2.9
+     */
+    UseObjectArray,
+
+    /**
+     * @since 1.2.22, 1.1.54.android
+     */
+    SupportNonPublicField,
+
+    /**
+     * @since 1.2.29
+     *
+     * disable autotype key '@type'
+     */
+    IgnoreAutoType,
+
+    /**
+     * @since 1.2.30
+     *
+     * disable field smart match, improve performance in some scenarios.
+     */
+    DisableFieldSmartMatch,
+
+    /**
+     * @since 1.2.41, backport to 1.1.66.android
+     */
+    SupportAutoType,
+
+    /**
+     * @since 1.2.42
+     */
+    NonStringKeyAsString,
+
+    /**
+     * @since 1.2.45
+     */
+    CustomMapDeserializer,
+
+    /**
+     * @since 1.2.55
+     */
+    ErrorOnEnumNotMatch
+    ;
+
+    Feature(){
+        mask = (1 &lt;&lt; ordinal());
+    }
+</code></pre><p>每一个Feature，都会被设置一个Mask：  int  mask = (1 &laquo; ordinal()); ordinal 是Feature在枚举中的位置</p>
+<h5 id="设置默认的features">设置默认的features</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java"><span style="color:#66d9ef">static</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">int</span> features <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+        features <span style="color:#f92672">|=</span> Feature<span style="color:#f92672">.</span><span style="color:#a6e22e">AutoCloseSource</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getMask</span><span style="color:#f92672">();</span>
+        features <span style="color:#f92672">|=</span> Feature<span style="color:#f92672">.</span><span style="color:#a6e22e">InternFieldNames</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getMask</span><span style="color:#f92672">();</span>
+        features <span style="color:#f92672">|=</span> Feature<span style="color:#f92672">.</span><span style="color:#a6e22e">UseBigDecimal</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getMask</span><span style="color:#f92672">();</span>
+        features <span style="color:#f92672">|=</span> Feature<span style="color:#f92672">.</span><span style="color:#a6e22e">AllowUnQuotedFieldNames</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getMask</span><span style="color:#f92672">();</span>
+        features <span style="color:#f92672">|=</span> Feature<span style="color:#f92672">.</span><span style="color:#a6e22e">AllowSingleQuotes</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getMask</span><span style="color:#f92672">();</span>
+        features <span style="color:#f92672">|=</span> Feature<span style="color:#f92672">.</span><span style="color:#a6e22e">AllowArbitraryCommas</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getMask</span><span style="color:#f92672">();</span>
+        features <span style="color:#f92672">|=</span> Feature<span style="color:#f92672">.</span><span style="color:#a6e22e">SortFeidFastMatch</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getMask</span><span style="color:#f92672">();</span>
+        features <span style="color:#f92672">|=</span> Feature<span style="color:#f92672">.</span><span style="color:#a6e22e">IgnoreNotMatch</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getMask</span><span style="color:#f92672">();</span>
+        DEFAULT_PARSER_FEATURE <span style="color:#f92672">=</span> features<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><h5 id="判断feature-是否打开">判断feature 是否打开</h5>
+<pre><code>return (features &amp; feature.mask) != 0;
+</code></pre><h5 id="开启feature">开启feature</h5>
+<pre><code>features |= feature.mask;
+</code></pre><h5 id="关闭feature">关闭feature</h5>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Java" data-lang="Java">features <span style="color:#f92672">&amp;=</span> <span style="color:#f92672">~</span>feature<span style="color:#f92672">.</span><span style="color:#a6e22e">mask</span><span style="color:#f92672">;</span>
+</code></pre></div><h4 id="结论">结论</h4>
+<p>单个接口要提供灵活的功能，可以参考这种实现方式。</p>
+
+  </div>
+  <footer>
+  <p>
+  &copy; 2019 叶宇航.
+  Powered by <a href="https://gohugo.io/">Hugo</a>
+  using the <a href="https://github.com/koirand/pulp/">pulp</a> theme.
+  </p>
+</footer>
+
+
+  </body>
+</html>

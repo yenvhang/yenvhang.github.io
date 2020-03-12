@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>nvhang</title>
+    <link>http://yenvhang.github.io/</link>
+    <description>Recent content on nvhang</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Tue, 25 Feb 2020 02:55:33 +0800</lastBuildDate>
+    
+	<atom:link href="http://yenvhang.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>FastJson Feature</title>
+      <link>http://yenvhang.github.io/posts/my-first-post/</link>
+      <pubDate>Tue, 25 Feb 2020 02:55:33 +0800</pubDate>
+      
+      <guid>http://yenvhang.github.io/posts/my-first-post/</guid>
+      <description>FastJson Feature FastJson 在序列化和反序列化的过程中提供了很多特性,比如Feature.DisableFieldSmartMatch。如果没有选择该Featur</description>
+    </item>
+    
+    <item>
+      <title>守护线程</title>
+      <link>http://yenvhang.github.io/posts/%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B/</link>
+      <pubDate>Wed, 04 Dec 2019 22:23:30 +0800</pubDate>
+      
+      <guid>http://yenvhang.github.io/posts/%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B/</guid>
+      <description>守护线程与用户线程 守护线程 Daemon Thread 依赋于用户线程，如果JVM 中存在一个或一个以上的非守护线程，那么该线程就不会被结束。 Thread dameonThread = new Thread(); dameonThread.setDaemon(true); 用户线程 User Thread 与</description>
+    </item>
+    
+    <item>
+      <title>线程状态</title>
+      <link>http://yenvhang.github.io/posts/%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81/</link>
+      <pubDate>Tue, 03 Dec 2019 22:07:30 +0800</pubDate>
+      
+      <guid>http://yenvhang.github.io/posts/%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81/</guid>
+      <description>线程状态 背景 发生OOM 之后通过 jstack 获取线程信息，当看到一堆线程状态的时候会有点迷，不知道各种线程状态具体代表的是什么意义,RUNABLE 很好理</description>
+    </item>
+    
+    <item>
+      <title>Zstack SimpleFlowChain解析</title>
+      <link>http://yenvhang.github.io/posts/zstack-simpleflowchain%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Thu, 27 Dec 2018 01:39:46 +0800</pubDate>
+      
+      <guid>http://yenvhang.github.io/posts/zstack-simpleflowchain%E8%A7%A3%E6%9E%90/</guid>
+      <description>Zstack SimpleFlowChain 解析 初始化的时候加载指定Flow 对象到 Listflows 对象中。 执行start 时，拿出第一个Flow,判断是否需要 skip private boolean isSkipFlow(Flow flow) { Boolean skip = FieldUtils.getFieldValue(&amp;#34;__skip__&amp;#34;, flow); boolean ret = skip != null &amp;amp;&amp;amp; skip;</description>
+    </item>
+    
+    <item>
+      <title>Logger配置文件加载以及Logger的获取</title>
+      <link>http://yenvhang.github.io/posts/logger%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E4%BB%A5%E5%8F%8Alogger%E7%9A%84%E8%8E%B7%E5%8F%96/</link>
+      <pubDate>Thu, 03 May 2018 02:02:58 +0800</pubDate>
+      
+      <guid>http://yenvhang.github.io/posts/logger%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E4%BB%A5%E5%8F%8Alogger%E7%9A%84%E8%8E%B7%E5%8F%96/</guid>
+      <description>我们在上一篇文章中了解到了SLF4J 是如何找到StaticLoggerBinder,然后通过StaticLoggerBinder 返回 ILog</description>
+    </item>
+    
+    <item>
+      <title>Slf4j绑定过程</title>
+      <link>http://yenvhang.github.io/posts/slf4j%E7%BB%91%E5%AE%9A%E8%BF%87%E7%A8%8B/</link>
+      <pubDate>Wed, 25 Apr 2018 02:02:36 +0800</pubDate>
+      
+      <guid>http://yenvhang.github.io/posts/slf4j%E7%BB%91%E5%AE%9A%E8%BF%87%E7%A8%8B/</guid>
+      <description>slf4j 作为一个日志接口。定义了实现日志框架的一些规范。那么slfj 是如何找到它的实现类呢？ 首先我们引入slf4j org.slf4jslf4j-a</description>
+    </item>
+    
+  </channel>
+</rss>

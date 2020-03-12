@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <title>
+      
+          Logger配置文件加载以及Logger的获取 - nvhang
+      
+  </title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="叶宇航" />
+  <link rel="shortcut icon" type="image/x-icon" href="http://yenvhang.github.io/img/favicon.ico">
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="http://yenvhang.github.io/style.min.a50e85be2191b7446e684667eb002377b10f833f329c30d9b701ea188a664750.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+  
+  
+
+  <meta property="og:title" content="Logger配置文件加载以及Logger的获取" />
+<meta property="og:description" content="我们在上一篇文章中了解到了SLF4J 是如何找到StaticLoggerBinder,然后通过StaticLoggerBinder 返回 ILog" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://yenvhang.github.io/posts/logger%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E4%BB%A5%E5%8F%8Alogger%E7%9A%84%E8%8E%B7%E5%8F%96/" />
+<meta property="article:published_time" content="2018-05-03T02:02:58+08:00" />
+<meta property="article:modified_time" content="2018-05-03T02:02:58+08:00" />
+<meta itemprop="name" content="Logger配置文件加载以及Logger的获取">
+<meta itemprop="description" content="我们在上一篇文章中了解到了SLF4J 是如何找到StaticLoggerBinder,然后通过StaticLoggerBinder 返回 ILog">
+<meta itemprop="datePublished" content="2018-05-03T02:02:58&#43;08:00" />
+<meta itemprop="dateModified" content="2018-05-03T02:02:58&#43;08:00" />
+<meta itemprop="wordCount" content="799">
+
+
+
+<meta itemprop="keywords" content="log," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:image" content="http://yenvhang.github.io//img/avatar.jpg"/>
+<meta name="twitter:title" content="Logger配置文件加载以及Logger的获取"/>
+<meta name="twitter:description" content="我们在上一篇文章中了解到了SLF4J 是如何找到StaticLoggerBinder,然后通过StaticLoggerBinder 返回 ILog"/>
+
+  <!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+  <![endif]-->
+
+  <!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+  <![endif]-->
+
+  </head>
+
+  <body>
+    
+  <h1>Logger配置文件加载以及Logger的获取</h1>
+  <header>
+  
+  <div class="avatar">
+    <img class="avatarMask" src="http://yenvhang.github.io//img/avatar.jpg">
+    <a href="http://yenvhang.github.io/"><img src="http://yenvhang.github.io//img/avatar-border.svg"></a>
+  </div>
+  
+  <h2><a class="author" href="http://yenvhang.github.io/">叶宇航</a></h2>
+</header>
+
+  
+  
+  <p class="date">May 3, 2018</p>
+  
+  <div id="tags">
+    <ul>
+      
+        
+        
+          <li><a href="http://yenvhang.github.io/tags/log/">log</a></li>
+        
+      
+    </ul>
+  </div>
+  
+  <div id="contentBody">
+    <p>我们在上一篇文章中了解到了SLF4J 是如何找到StaticLoggerBinder,然后通过StaticLoggerBinder 返回 ILoggerFactory。再通过ILoggerFactory 获取Logger。
+这一节我们主要来看一下Log4j 中 ILoggerFactory 的实现类 和Logger 的实现类。</p>
+<p>首先是Log4jLoggerFactory</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/5426080-54ab76a68f5e2f3b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Log4jLoggerFactory">
+Log4jLoggerFactory 实现了ILoggerFactory 接口。
+并提供了一个 存放 Logger 的容器。</p>
+<p>先来看一下它的构造器。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/5426080-acdeb6c1f8ff2567.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Log4jLoggerFactory构造器"></p>
+<p>在Log4jLoggerFactory 的构造方法中会先去 初始化一个 存放Logger 的CocurrentHashMap 容器。
+调用getLogger 时。会优先从该容器中获取 Logger。
+如果不存在，则委托LoggerManager 去获取 Logger 对象。
+<img src="https://upload-images.jianshu.io/upload_images/5426080-3996cd50f685db75.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Log4jLoggerFactory.getLogger().png"></p>
+<p>再往下看。
+第17 行。 有一个Log4jLoggerAdapter。
+此Logger 非彼Logger。 从LoggerManager 获取的Logger 并没有实现 Slf4j 的Logger接口。而是去继承了Category。实现的是一个AppenderAttachable 的接口。
+<img src="https://upload-images.jianshu.io/upload_images/5426080-0e7eed6f6d9fed18.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Log4j.Logger.png">
+所以需要通过Log4jLoggerAdapter 适配器类 将 基类是Category 的Logger 转换成 实现了 Slf4j 中Logger接口  的Looger类。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/5426080-c88df7dcf1ece866.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Log4jLoggerAdapter"></p>
+<p>为什么LoggerManager 不直接去实现SLF4J.Logger 接口而是非要弄一个适配器类？
+Log4jLoggerFactory 为什么不直接去获取Logger 而是 把它委托给LogManager 呢？
+我们来看一下LoggerManager 的结构。
+<img src="https://upload-images.jianshu.io/upload_images/5426080-98121efe01e708a5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="LogManager.png">
+LogManager 的getLogger 方法又 委托了LoggerRepository去 实现。。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/5426080-483de87c6c30ecfe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="LogManager.getLogger()"></p>
+<p>在LogManager 的静态方法中。获取配置文件地址，加载配置文件（Log4j.xml或者其它)并抽象化，再配置到LoggerRepository 中。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/5426080-d57db4cfa0ce6dc4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="获取配置文件地址">
+<img src="https://upload-images.jianshu.io/upload_images/5426080-90dabe88f330af9f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="加载配置文件并整合到LoggerRepository "></p>
+<p>OptionConverter 获取Configurator 对象（抽象化）。 Configurator.doConfigure() 加载配置文件 并与LoggerRepository  整合。
+<img src="https://upload-images.jianshu.io/upload_images/5426080-6e6b097259988f66.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="加载配置文件">
+<img src="https://upload-images.jianshu.io/upload_images/5426080-16b87a6190bacadc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="整合到LoggerRepository 中"></p>
+
+  </div>
+  <footer>
+  <p>
+  &copy; 2019 叶宇航.
+  Powered by <a href="https://gohugo.io/">Hugo</a>
+  using the <a href="https://github.com/koirand/pulp/">pulp</a> theme.
+  </p>
+</footer>
+
+
+  </body>
+</html>

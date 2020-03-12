@@ -1,0 +1,19 @@
+[
+    {
+        "ref": "http://yenvhang.github.io/posts/logger%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E4%BB%A5%E5%8F%8Alogger%E7%9A%84%E8%8E%B7%E5%8F%96/",
+        "title": "Logger配置文件加载以及Logger的获取",
+        "section": "posts",
+        "tags": ["log"],
+        "date" : "2018.05.03",
+        "body": "我们在上一篇文章中了解到了SLF4J 是如何找到StaticLoggerBinder,然后通过StaticLoggerBinder 返回 ILoggerFactory。再通过ILoggerFactory 获取Logger。 这一节我们主要来看一下Log4j 中 ILoggerFactory 的实现类 和Logger 的实现类。\n首先是Log4jLoggerFactory\nLog4jLoggerFactory 实现了ILoggerFactory 接口。 并提供了一个 存放 Logger 的容器。\n先来看一下它的构造器。\n在Log4jLoggerFactory 的构造方法中会先去 初始化一个 存放Logger 的CocurrentHashMap 容器。 调用getLogger 时。会优先从该容器中获取 Logger。 如果不存在，则委托LoggerManager 去获取 Logger 对象。 再往下看。 第17 行。 有一个Log4jLoggerAdapter。 此Logger 非彼Logger。 从LoggerManager 获取的Logger 并没有实现 Slf4j 的Logger接口。而是去继承了Category。实现的是一个AppenderAttachable 的接口。 所以需要通过Log4jLoggerAdapter 适配器类 将 基类是Category 的Logger 转换成 实现了 Slf4j 中Logger接口 的Looger类。\n为什么LoggerManager 不直接去实现SLF4J.Logger 接口而是非要弄一个适配器类？ Log4jLoggerFactory 为什么不直接去获取Logger 而是 把它委托给LogManager 呢？ 我们来看一下LoggerManager 的结构。 LogManager 的getLogger 方法又 委托了LoggerRepository去 实现。。\n在LogManager 的静态方法中。获取配置文件地址，加载配置文件（Log4j.xml或者其它)并抽象化，再配置到LoggerRepository 中。\nOptionConverter 获取Configurator 对象（抽象化）。 Configurator.doConfigure() 加载配置文件 并与LoggerRepository 整合。 "
+    }
+,
+    {
+        "ref": "http://yenvhang.github.io/posts/slf4j%E7%BB%91%E5%AE%9A%E8%BF%87%E7%A8%8B/",
+        "title": "Slf4j绑定过程",
+        "section": "posts",
+        "tags": ["log"],
+        "date" : "2018.04.25",
+        "body": " slf4j 作为一个日志接口。定义了实现日志框架的一些规范。那么slfj 是如何找到它的实现类呢？\n首先我们引入slf4j org.slf4jslf4j-api1.7.24参考官方文档写法\n import org.slf4j.Logger; import org.slf4j.LoggerFactory; public class HelloWorld { public static void main(String[] args) { Logger logger = LoggerFactory.getLogger(HelloWorld.class); logger.info(\u0026quot;Hello World\u0026quot;); } }  运行后 有如下异常信息 大概能猜到 是因为少了某些类。 根据错误信息一步步定位到代码位置。 调用getLogger方法后执行 初始化方法 performInitialization(); 再进入Bind 方法 在17行我们找到了错误信息的来源。这里应该能猜到是因为JVM 运行的时候找不到StaticLoggerBinder类。 参考 slf4j 的实现框架log4j 的StaticLoggerBinder类。 新建了一个自己的StaticLoggerBind类。\n如上。我们再去运行一下我们那段hello代码。程序就能正常运行了。 因为new 出来的Logger 类 没有真正去实现info方法。所有没有任何日志输出。 流程：调用SLF4J 中的LoggerFactory.getLogger 方法后会先去获取ILoggerFactory对象。 获取该工厂对象时，会根据状态来判断是否 执行初始化方法。 在初始话方法中 加载StaticLoggerBinder类。 通过ClasssLoader.getResource(\u0026ldquo;org/slf4j/impl/StaticLoggerBinder.class\u0026rdquo;) 判断是否绑定了多个StaticLoggerBinder。并对比SLF4J 支持的版本号和StatiLoggerBinder 中提供的版本号。 通过ClassLoader 去检查是否有多个StatiLoggerBinder.class。 再把ILoggerFactory 对象的返回 委托给 StatiLoggerBinder去实现。 StatiLoggerBinder返回ILoggerFactory后再通过ILoogerFactory 去获取Logger 对象。\n"
+    }
+]
