@@ -1,6 +1,6 @@
 [
     {
-        "ref": "http://yenvhang.github.io/posts/%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B/",
+        "ref": "http://zshit.github.io/posts/%E5%AE%88%E6%8A%A4%E7%BA%BF%E7%A8%8B/",
         "title": "守护线程",
         "section": "posts",
         "tags": ["java"],
@@ -9,7 +9,7 @@
     }
 ,
     {
-        "ref": "http://yenvhang.github.io/posts/%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81/",
+        "ref": "http://zshit.github.io/posts/%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81/",
         "title": "线程状态",
         "section": "posts",
         "tags": ["java"],
